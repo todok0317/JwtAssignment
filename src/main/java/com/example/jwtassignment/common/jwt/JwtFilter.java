@@ -1,24 +1,23 @@
 package com.example.jwtassignment.common.jwt;
 
+import com.example.jwtassignment.common.error.ExceptionCode;
+import com.example.jwtassignment.common.error.JwtAuthenticationException;
 import com.example.jwtassignment.common.security.CustomUserDetailsService;
 import com.example.jwtassignment.common.security.CustomUserPrincipal;
-import com.example.jwtassignment.domain.User.enums.UserRole;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,8 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader("Authorization");
 
         if (bearerToken == null) {
-            setErrorResponse(response, HttpStatus.UNAUTHORIZED, "INVALID_TOKEN", "인증 토큰이 필요합니다.");
-            return;
+            throw new JwtAuthenticationException(ExceptionCode.MISSING_TOKEN);
         }
 
         try {
@@ -59,32 +57,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
         } catch (SecurityException | MalformedJwtException e) {
             log.error("잘못된 JWT 서명", e);
-            setErrorResponse(response, HttpStatus.UNAUTHORIZED, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
+            throw new JwtAuthenticationException(ExceptionCode.INVALID_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             log.error("JWT 만료", e);
-            setErrorResponse(response, HttpStatus.UNAUTHORIZED, "EXPIRED_TOKEN", "토큰이 만료되었습니다.");
+            throw new JwtAuthenticationException(ExceptionCode.EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT", e);
-            setErrorResponse(response, HttpStatus.UNAUTHORIZED, "UNSUPPORTED_TOKEN", "지원되지 않는 토큰입니다.");
+            throw new JwtAuthenticationException(ExceptionCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            log.error("잘못된 JWT 토큰", e);
+            throw new JwtAuthenticationException(ExceptionCode.INVALID_TOKEN);
         } catch (Exception e) {
-            log.error("기타 JWT 예외", e);
-            setErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "서버 내부 오류가 발생했습니다.");
+            log.error("JWT 처리 중 예외 발생", e);
+            throw new JwtAuthenticationException(ExceptionCode.INTERNAL_ERROR);
         }
-    }
-
-    private void setErrorResponse(HttpServletResponse response, HttpStatus status,
-        String code, String message) throws IOException {
-        response.setStatus(status.value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        Map<String, Object> errorBody = new HashMap<>();
-        Map<String, String> error = new HashMap<>();
-        error.put("code", code);
-        error.put("message", message);
-        errorBody.put("error", error);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(errorBody));
     }
 }
