@@ -9,15 +9,16 @@ import lombok.Getter;
 public class ErrorResponse {
     private ErrorDetail error;
 
-    public ErrorResponse(String code, String message) {
-        this.error = new ErrorDetail(code, message);
-    }
-
-    @Data
+    @Getter
     @AllArgsConstructor
-    static class ErrorDetail {
+    public static class ErrorDetail {
         private String code;
         private String message;
     }
+
+    public static ErrorResponse of(String code, String message) {
+        return new ErrorResponse(new ErrorDetail(code, message));
+    }
 }
+
 

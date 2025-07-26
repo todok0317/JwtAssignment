@@ -1,43 +1,67 @@
 package com.example.jwtassignment.common.jwt;
 
+import com.example.jwtassignment.domain.User.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+@Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret}")
-    private String secret;
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 2; // 2시간
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final long TOKEN_TIME = 2 * 60 * 60 * 1000L; // 60분
 
-    public String createToken(String username, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
-        Date now = new Date();
+    @Value("${jwt.secret.key}")
+    private String secretKey;
+    private Key key;
+    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    @PostConstruct
+    public void init() {
+        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        key = Keys.hmacShaKeyFor(bytes);
+    }
+
+    public String createToken(Long userId, String username, UserRole userRole) {
+        Date date = new Date();
+
         return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
-            .signWith(SignatureAlgorithm.HS256, secret.getBytes())
-            .compact();
+                .setSubject(String.valueOf(userId))
+                .claim("username", username)
+                .claim("userRole", userRole)
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
         }
+        throw new IllegalArgumentException("유효하지 않은 JWT 형식입니다.");
     }
 
-    public Claims getClaims(String token) {
-        return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+    public Claims extractClaims(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
     }
+
+    public Long getUserIdFromToken(String token) {
+        return Long.parseLong(extractClaims(token).getSubject());
+    }
+
 }
-

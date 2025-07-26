@@ -1,24 +1,24 @@
 package com.example.jwtassignment.common.security;
 
 import com.example.jwtassignment.domain.User.entity.User;
+import java.security.Principal;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class CustomUserPrincipal implements UserDetails {
-    private final User user;
+@Getter
+@RequiredArgsConstructor
+public class CustomUserPrincipal implements UserDetails, Principal {
 
-    public CustomUserPrincipal(User user) {
-        this.user = user;
-    }
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream()
-            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-            .collect(Collectors.toList());
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRoles()));
     }
 
     @Override
@@ -29,6 +29,10 @@ public class CustomUserPrincipal implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     @Override
@@ -51,5 +55,8 @@ public class CustomUserPrincipal implements UserDetails {
         return true;
     }
 
-    public User getUser() { return user; }
+    @Override
+    public String getName() {
+        return "";
+    }
 }
