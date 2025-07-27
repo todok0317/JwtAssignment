@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         String url = request.getRequestURI();
-        if (url.equals("/signup") || url.equals("/login")) { // 변경된 부분
+        if (url.equals("/signup") || url.equals("/login")) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -3,6 +3,7 @@ package com.example.jwtassignment.common.error;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,6 +39,20 @@ public class GlobalExceptionHandler {
             .status(ExceptionCode.INVALID_CREDENTIALS.getHttpStatus())
             .body(ErrorResponse.of(ExceptionCode.INVALID_CREDENTIALS));
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .findFirst()
+            .orElse("입력값이 올바르지 않습니다.");
+
+        return ResponseEntity
+            .status(ExceptionCode.VALIDATION_ERROR.getHttpStatus())
+            .body(ErrorResponse.of(ExceptionCode.VALIDATION_ERROR.name(), errorMessage));
+    }
+
+
 
     // 기타 모든 예외 처리
     @ExceptionHandler(Exception.class)

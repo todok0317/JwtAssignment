@@ -7,6 +7,7 @@ import com.example.jwtassignment.domain.auth.dto.response.SignUpResponseDto;
 import com.example.jwtassignment.domain.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
@@ -25,7 +26,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponseDto> signUp (@Valid @RequestBody SignUpRequestDto requestDto) {
         SignUpResponseDto responseDto = authService.signUp(requestDto);
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     // 로그인
