@@ -6,7 +6,6 @@ import com.example.jwtassignment.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,9 +33,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth
                 -> {
                 auth.requestMatchers("/signup", "/login").permitAll();
+                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
+                auth.requestMatchers("/h2-console/**").permitAll();
                 auth.requestMatchers("/admin/**").hasRole("ADMIN");
                 auth.anyRequest().authenticated();
             })
+            .headers(headers -> headers.frameOptions().disable())
             .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
