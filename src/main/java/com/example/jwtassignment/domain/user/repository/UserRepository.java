@@ -1,6 +1,6 @@
-package com.example.jwtassignment.domain.User.repository;
+package com.example.jwtassignment.domain.user.repository;
 
-import com.example.jwtassignment.domain.User.entity.User;
+import com.example.jwtassignment.domain.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

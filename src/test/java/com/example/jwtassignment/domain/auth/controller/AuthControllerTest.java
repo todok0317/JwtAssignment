@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.jwtassignment.domain.User.entity.User;
-import com.example.jwtassignment.domain.User.repository.UserRepository;
+import com.example.jwtassignment.domain.user.entity.User;
+import com.example.jwtassignment.domain.user.repository.UserRepository;
 import com.example.jwtassignment.domain.auth.dto.request.LoginRequestDto;
 import com.example.jwtassignment.domain.auth.dto.request.SignUpRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;

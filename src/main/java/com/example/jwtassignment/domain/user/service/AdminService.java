@@ -1,11 +1,11 @@
-package com.example.jwtassignment.domain.User.service;
+package com.example.jwtassignment.domain.user.service;
 
 import com.example.jwtassignment.common.error.BusinessException;
 import com.example.jwtassignment.common.error.ExceptionCode;
-import com.example.jwtassignment.domain.User.dto.response.AdminRoleResponseDto;
-import com.example.jwtassignment.domain.User.entity.User;
-import com.example.jwtassignment.domain.User.enums.UserRole;
-import com.example.jwtassignment.domain.User.repository.UserRepository;
+import com.example.jwtassignment.domain.user.dto.response.AdminRoleResponseDto;
+import com.example.jwtassignment.domain.user.entity.User;
+import com.example.jwtassignment.domain.user.enums.UserRole;
+import com.example.jwtassignment.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

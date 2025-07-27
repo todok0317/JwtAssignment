@@ -1,6 +1,6 @@
-package com.example.jwtassignment.domain.User.entity;
+package com.example.jwtassignment.domain.user.entity;
 
-import com.example.jwtassignment.domain.User.enums.UserRole;
+import com.example.jwtassignment.domain.user.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;

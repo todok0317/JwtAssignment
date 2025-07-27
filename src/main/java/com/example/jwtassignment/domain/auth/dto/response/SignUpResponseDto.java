@@ -1,7 +1,6 @@
 package com.example.jwtassignment.domain.auth.dto.response;
 
-import com.example.jwtassignment.domain.User.entity.User;
-import com.example.jwtassignment.domain.User.enums.UserRole;
+import com.example.jwtassignment.domain.user.entity.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;

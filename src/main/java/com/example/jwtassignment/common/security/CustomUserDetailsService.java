@@ -1,6 +1,6 @@
 package com.example.jwtassignment.common.security;
 
-import com.example.jwtassignment.domain.User.repository.UserRepository;
+import com.example.jwtassignment.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

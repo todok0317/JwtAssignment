@@ -1,7 +1,7 @@
-package com.example.jwtassignment.domain.User.controller;
+package com.example.jwtassignment.domain.user.controller;
 
-import com.example.jwtassignment.domain.User.dto.response.AdminRoleResponseDto;
-import com.example.jwtassignment.domain.User.service.AdminService;
+import com.example.jwtassignment.domain.user.dto.response.AdminRoleResponseDto;
+import com.example.jwtassignment.domain.user.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
