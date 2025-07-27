@@ -33,8 +33,8 @@ public class SecurityConfig {
                 -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth
                 -> {
-                auth.requestMatchers("/auth/**").permitAll();
-
+                auth.requestMatchers("/signup", "/login").permitAll();
+                auth.requestMatchers("/admin/**").hasRole("ADMIN");
                 auth.anyRequest().authenticated();
             })
             .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
