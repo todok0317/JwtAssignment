@@ -1,6 +1,6 @@
 package com.example.jwtassignment.common.security;
 
-import com.example.jwtassignment.domain.User.entity.User;
+import com.example.jwtassignment.domain.user.entity.User;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +18,9 @@ public class CustomUserPrincipal implements UserDetails, Principal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRoles()));
+        return user.getRoles().stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+            .toList();
     }
 
     @Override

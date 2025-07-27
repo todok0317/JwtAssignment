@@ -1,6 +1,5 @@
 package com.example.jwtassignment.common.jwt;
 
-import com.example.jwtassignment.domain.User.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

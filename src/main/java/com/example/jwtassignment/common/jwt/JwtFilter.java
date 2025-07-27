@@ -4,6 +4,7 @@ import com.example.jwtassignment.common.error.ExceptionCode;
 import com.example.jwtassignment.common.error.JwtAuthenticationException;
 import com.example.jwtassignment.common.security.CustomUserDetailsService;
 import com.example.jwtassignment.common.security.CustomUserPrincipal;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -13,8 +14,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -43,7 +48,8 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader("Authorization");
 
         if (bearerToken == null) {
-            throw new JwtAuthenticationException(ExceptionCode.MISSING_TOKEN);
+            sendErrorResponse(response, ExceptionCode.MISSING_TOKEN);
+            return;
         }
 
         try {
@@ -61,19 +67,36 @@ public class JwtFilter extends OncePerRequestFilter {
 
         } catch (SecurityException | MalformedJwtException e) {
             log.error("잘못된 JWT 서명", e);
-            throw new JwtAuthenticationException(ExceptionCode.INVALID_JWT_SIGNATURE);
+            sendErrorResponse(response, ExceptionCode.INVALID_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             log.error("JWT 만료", e);
-            throw new JwtAuthenticationException(ExceptionCode.EXPIRED_TOKEN);
+            sendErrorResponse(response, ExceptionCode.EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT", e);
-            throw new JwtAuthenticationException(ExceptionCode.UNSUPPORTED_TOKEN);
+            sendErrorResponse(response, ExceptionCode.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
             log.error("잘못된 JWT 토큰", e);
-            throw new JwtAuthenticationException(ExceptionCode.INVALID_TOKEN);
+            sendErrorResponse(response, ExceptionCode.INVALID_TOKEN);
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            log.error("JWT 서명 검증 실패", e);
+            sendErrorResponse(response, ExceptionCode.INVALID_JWT_SIGNATURE);
         } catch (Exception e) {
             log.error("JWT 처리 중 예외 발생", e);
-            throw new JwtAuthenticationException(ExceptionCode.INTERNAL_ERROR);
+            sendErrorResponse(response, ExceptionCode.INVALID_JWT_SIGNATURE);
         }
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
+        response.setStatus(exceptionCode.getHttpStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("code", exceptionCode.name());
+        error.put("message", exceptionCode.getMessage());
+        errorResponse.put("error", error);
+
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

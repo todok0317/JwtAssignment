@@ -1,9 +1,9 @@
-package com.example.jwtassignment.domain.User.controller;
+package com.example.jwtassignment.domain.user.controller;
 
 import com.example.jwtassignment.common.jwt.JwtUtil;
-import com.example.jwtassignment.domain.User.entity.User;
-import com.example.jwtassignment.domain.User.enums.UserRole;
-import com.example.jwtassignment.domain.User.repository.UserRepository;
+import com.example.jwtassignment.domain.user.entity.User;
+import com.example.jwtassignment.domain.user.enums.UserRole;
+import com.example.jwtassignment.domain.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -56,13 +56,13 @@ class AdminControllerTest {
             .username("normaluser")
             .password(passwordEncoder.encode("password123"))
             .nickname("일반유저")
-            .roles(new ArrayList<>(List.of(UserRole.ADMIN)))
+            .roles(new ArrayList<>(List.of(UserRole.USER)))
             .build();
         User savedNormalUser = userRepository.save(normalUser);
 
         // JWT 토큰 생성
         String adminToken = jwtUtil.createToken(savedAdmin.getId(), savedAdmin.getUsername(),
-            savedAdmin.getRoles().toString());
+            savedAdmin.getRoles().get(0).name());
 
         // when & then
         mockMvc.perform(patch("/admin/users/{userId}/roles", savedNormalUser.getId())
@@ -96,7 +96,7 @@ class AdminControllerTest {
 
         // 일반 사용자의 JWT 토큰 생성
         String userToken = jwtUtil.createToken(savedNormalUser1.getId(),
-            savedNormalUser1.getUsername(), savedNormalUser1.getRoles().toString());
+            savedNormalUser1.getUsername(), savedNormalUser1.getRoles().get(0).name());
 
         // when & then
         mockMvc.perform(patch("/admin/users/{userId}/roles", savedNormalUser2.getId())
@@ -118,7 +118,7 @@ class AdminControllerTest {
         User savedAdmin = userRepository.save(adminUser);
 
         String adminToken = jwtUtil.createToken(savedAdmin.getId(), savedAdmin.getUsername(),
-            savedAdmin.getRoles().toString());
+            savedAdmin.getRoles().get(0).name());
 
         // when & then
         mockMvc.perform(patch("/admin/users/{userId}/roles", 999L) // 존재하지 않는 ID
@@ -142,7 +142,9 @@ class AdminControllerTest {
         // when & then
         mockMvc.perform(patch("/admin/users/{userId}/roles", savedNormalUser.getId())
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.error.code").value("MISSING_TOKEN"))
+            .andExpect(jsonPath("$.error.message").value("인증 토큰이 필요합니다."));
     }
 
     @Test
@@ -164,6 +166,8 @@ class AdminControllerTest {
         mockMvc.perform(patch("/admin/users/{userId}/roles", savedNormalUser.getId())
                 .header("Authorization", "Bearer " + invalidToken)
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.error.code").value("INVALID_JWT_SIGNATURE"))
+            .andExpect(jsonPath("$.error.message").value("유효하지 않은 JWT 서명입니다."));
     }
 }

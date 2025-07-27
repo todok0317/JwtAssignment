@@ -1,4 +1,4 @@
-package com.example.jwtassignment.domain.User.enums;
+package com.example.jwtassignment.domain.user.enums;
 
 import java.util.Arrays;
 
