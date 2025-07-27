@@ -197,7 +197,13 @@ java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar
 - EC2 인스턴스 생성
 - JDK 17 설치  
 - 애플리케이션 배포
-- 보안 그룹 설정 (포트 8080 오픈)
+- 보안 그룹 설정 (포트 8080 오픈) 
+
+### 프로젝트 빌드 및 실행
+```
+./gradlew clean build
+java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar —server.address=0.0.0.0
+```
 
 **배포된 서비스 접속 정보**
 - **API 엔드포인트**: `http://[실제_EC2_IP]:8080`
