@@ -1,12 +1,12 @@
 # JWT Assignment
 
-## 📋 프로젝트 소개
+## 프로젝트 소개
 
 Spring Boot를 이용한 JWT 기반 인증/인가 시스템 구현 프로젝트입니다.
 
 JWT(JSON Web Token)를 활용하여 사용자 인증 및 권한 관리를 수행하며, 역할 기반 접근 제어를 통해 일반 사용자와 관리자를 구분합니다.
 
-## ⚙️ 기술 스택
+## 기술 스택
 
 **Backend**
 - Java 17
@@ -29,24 +29,24 @@ JWT(JSON Web Token)를 활용하여 사용자 인증 및 권한 관리를 수행
 **Build Tool**
 - Gradle
 
-## 🚀 주요 기능
+## 주요 기능
 
-### 🔐 인증 시스템
+### 인증 시스템
 - **회원가입**: 사용자명, 비밀번호, 닉네임으로 계정 생성
 - **로그인**: JWT 토큰 발급 및 인증
 - **비밀번호 암호화**: BCrypt 알고리즘 사용
 
-### 👥 권한 관리
+### 권한 관리
 - **USER**: 기본 사용자 권한
 - **ADMIN**: 관리자 권한
 - **역할 기반 접근 제어**: 관리자만 권한 부여 가능
 
-### 🔒 JWT 토큰 관리
+### JWT 토큰 관리
 - **토큰 생성 및 검증**: HS256 알고리즘 사용
 - **토큰 만료**: 2시간 유효시간
 - **Bearer 토큰**: Authorization 헤더 방식
 
-## 📚 API 명세
+## API 명세
 
 ### 인증 API
 
@@ -114,7 +114,7 @@ Authorization: Bearer {token}
 }
 ```
 
-## 🗂️ 프로젝트 구조
+## 프로젝트 구조
 
 ```
 src/
@@ -137,7 +137,7 @@ src/
         └── domain/              # 테스트 코드
 ```
 
-## 🛠️ 설치 및 실행
+## 설치 및 실행
 
 ### 1. 프로젝트 클론
 ```bash
@@ -160,7 +160,7 @@ java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar
 - **Swagger UI**: http://localhost:8080/swagger-ui/index.html
 - **H2 Console**: http://localhost:8080/h2-console
 
-## 🧪 테스트
+## 테스트
 
 ```bash
 # 전체 테스트 실행
@@ -175,7 +175,7 @@ java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar
 - AdminController: 관리자 권한 부여 관련 케이스
 - JWT 인증: 토큰 검증, 만료, 권한 확인
 
-## 🔧 주요 설정
+## 주요 설정
 
 ### JWT 설정
 - **알고리즘**: HS256
@@ -191,31 +191,21 @@ java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar
 - **타입**: H2 In-Memory
 - **DDL**: create-drop (애플리케이션 재시작 시 초기화)
 
-## ⚠️ 에러 코드
+## 배포
 
-| 코드 | 상태 | 메시지 |
-|------|------|--------|
-| USER_ALREADY_EXISTS | 409 | 이미 가입된 사용자입니다. |
-| INVALID_CREDENTIALS | 401 | 아이디 또는 비밀번호가 올바르지 않습니다. |
-| ACCESS_DENIED | 403 | 접근 권한이 없습니다. |
-| INVALID_TOKEN | 401 | 유효하지 않은 인증 토큰입니다. |
-| USER_NOT_FOUND | 404 | 사용자를 찾을 수 없습니다. |
-
-## 🌐 배포
-
-### AWS EC2 배포 완료 ✅
-- ✅ EC2 인스턴스 생성
-- ✅ JDK 17 설치  
-- ✅ 애플리케이션 배포
-- ✅ 보안 그룹 설정 (포트 8080 오픈)
+### AWS EC2 배포 완료
+- EC2 인스턴스 생성
+- JDK 17 설치  
+- 애플리케이션 배포
+- 보안 그룹 설정 (포트 8080 오픈)
 
 **배포된 서비스 접속 정보**
 - **API 엔드포인트**: `http://[실제_EC2_IP]:8080`
 - **Swagger UI**: `http://[실제_EC2_IP]:8080/swagger-ui/index.html`
 
-> ⚠️ **참고**: 실제 EC2 IP 주소를 위에 입력해주세요.
+ **참고**: 실제 EC2 IP 주소를 위에 입력해주세요.
 
-## 📝 개발 환경
+## 개발 환경
 
 ### 필수 요구사항
 - **Java SDK**: 17
@@ -227,11 +217,3 @@ java -jar build/libs/JwtAssignment-0.0.1-SNAPSHOT.jar
 # JWT Secret Key (기본값 사용 시 생략 가능)
 export JWT_SECRET_KEY=your-secret-key-here
 ```
-
-## 🤝 기여
-
-이 프로젝트는 과제용으로 제작되었습니다.
-
-## 📄 라이선스
-
-이 프로젝트는 교육 목적으로 제작되었습니다.
