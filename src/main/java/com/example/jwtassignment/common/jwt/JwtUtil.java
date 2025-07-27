@@ -36,13 +36,13 @@ public class JwtUtil {
         Date date = new Date();
 
         return Jwts.builder()
-                .setSubject(String.valueOf(userId))
-                .claim("username", username)
-                .claim("userRole", userRole)
-                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-                .setIssuedAt(date)
-                .signWith(key, signatureAlgorithm)
-                .compact();
+            .setSubject(String.valueOf(userId))
+            .claim("username", username)
+            .claim("userRole", "ROLE_" + userRole)
+            .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+            .setIssuedAt(date)
+            .signWith(key, signatureAlgorithm)
+            .compact();
     }
 
     public String substringToken(String tokenValue) {
