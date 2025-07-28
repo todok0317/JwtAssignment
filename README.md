@@ -1,5 +1,7 @@
 # JWT Assignment
 
+https://velog.io/@todok0317/JWT-애플리케이션-AWS-EC2-배포
+
 ## 프로젝트 소개
 
 Spring Boot를 이용한 JWT 기반 인증/인가 시스템 구현 프로젝트입니다.
